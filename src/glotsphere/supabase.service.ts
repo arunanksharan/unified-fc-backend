@@ -5,7 +5,10 @@ import { createClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseService {
-  private supabase = createClient('your-supabase-url', 'your-supabase-key');
+  private supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
+  );
 
   async saveToSuccessTable(data: any): Promise<void> {
     const { error } = await this.supabase.from('success_table').insert([data]);
