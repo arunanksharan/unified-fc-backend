@@ -11,18 +11,19 @@ export class UsersService {
     domain: string,
   ): Promise<UserWithApiKeyResponseDto> {
     try {
+      // Todo: rename User to App
       // Case 1: Check if the user exists
       const { data: user, error: userError } = await supabase
-        .from('apps')
+        .from('users')
         .select('*')
         .eq('ethereum_address', ethereumAddress)
         .single();
 
       console.log('line 21 user fetched', user);
 
-      //   if (userError) {
-      //     throw new Error(`Failed to fetch user line 22: ${userError.message}`);
-      //   }
+      if (userError) {
+        throw new Error(`Failed to fetch user line 22: ${userError.message}`);
+      }
 
       // Case 1A: If user exists, fetch & return its user details with API key
       if (user) {
@@ -46,7 +47,7 @@ export class UsersService {
 
       // Case 2: If user doesn't exist, create a new user
       const { data: newUser, error: newUserError } = await supabase
-        .from('apps')
+        .from('users')
         .insert({ ethereum_address: ethereumAddress, domain: domain })
         .select();
 

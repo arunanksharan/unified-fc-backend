@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { GlotsphereService } from './glotsphere.service';
-import { CreateGlotsphereDto } from './dto/create-glotsphere.dto';
+import { CreateCastDto } from './dto/create-glotsphere.dto';
 import { UpdateGlotsphereDto } from './dto/update-glotsphere.dto';
 import { BullQueueService } from './bull-queue.service';
 
@@ -27,21 +27,29 @@ export class GlotsphereController {
     private readonly bullQueueService: BullQueueService,
   ) {}
 
-  @Post()
-  async create(@Body() createGlotsphereDto: CreateGlotsphereDto) {
+  @Get('test')
+  async test() {
+    return 'Testing Glotsphere Controller';
+  }
+
+  @Post('create')
+  async create(@Body() createCastDto: CreateCastDto) {
     /**
-     * @dev create mthod is called by the caster to convert the text into multiple languages using the Glotsphere service & post it to Farcaster using Neynar
+     * @dev create method is called by the caster to convert the text into multiple languages using the Glotsphere service & post it to Farcaster using Neynar
      *
      * createGlotsphereDto is an object with two properties: castText and languages
      * castText is a string and languages is an array of strings
      *
      */
-    const job =
-      await this.bullQueueService.addTranslationJob(createGlotsphereDto);
+    console.log('gs C-39-createGlotsphereDto', createCastDto);
+    const job = await this.bullQueueService.addTranslationJob(createCastDto);
     return { message: 'Translation in progress', jobId: job.id };
-    // return this.glotsphereService.create(createGlotsphereDto);
   }
 
+  /**
+   * The below given CRUD operations are not being used right now.
+   * This will be added over time as per the requirements.
+   */
   @Get()
   findAll() {
     return this.glotsphereService.findAll();

@@ -3,6 +3,10 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources';
+import {
+  GPTTranslatedTextType,
+  GetTranslationFromOpenaiRequest,
+} from './types/types';
 
 @Injectable()
 export class TranslationService {
@@ -13,36 +17,41 @@ export class TranslationService {
   }
 
   async getTranslation({
-    cast,
-    languagesArray,
-  }: {
-    cast: string;
-    languagesArray: string[];
-  }): Promise<any> {
-    const languages = languagesArray.join(', ');
+    castText,
+    languages,
+  }: GetTranslationFromOpenaiRequest): Promise<GPTTranslatedTextType> {
+    const languagesString = languages.join(', ');
 
     const aiMessages: ChatCompletionMessageParam[] = [
-      { role: 'system', content: this.get_translation_prompt(languages) },
-      { role: 'user', content: `Text:\n${cast}` },
+      { role: 'system', content: this.get_translation_prompt(languagesString) },
+      { role: 'user', content: `Text:\n${castText}` },
     ];
 
     try {
-      const gptResponse = await this.openai.chat.completions.create({
+      const completion = await this.openai.chat.completions.create({
         messages: aiMessages,
-        temperature: 1,
+        temperature: 0.8,
         model: 'gpt-4-0125-preview',
+        response_format: { type: 'json_object' },
       });
-      return gptResponse; // Assuming the response structure fits your needs, adjust as necessary
+      const result = completion.choices[0].message.content || '{}';
+      console.log('result:', result);
+
+      const jsonResponse = JSON.parse(result);
+      console.log('xxxxxxxx start jsonResponse parsed is');
+      console.log(jsonResponse);
+      console.log('xxxxxxxx end jsonResponse parsed is');
+      return jsonResponse;
     } catch (error) {
       console.error('Error fetching translations:', error);
       throw new Error('Failed to fetch translations');
     }
   }
 
-  private get_translation_prompt(languages: string): string {
+  private get_translation_prompt(languagesString: string): string {
     return `
     
-    Translate the following text into the provided languages: ${languages}
+    Translate the following text into the provided languages: ${languagesString}
     
     Below is an an example of this summarisation for the text provided:
     

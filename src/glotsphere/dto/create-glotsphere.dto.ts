@@ -1,6 +1,6 @@
 import { IsArray, IsString } from 'class-validator';
 
-export class CreateGlotsphereDto {
+export class CreateCastDto {
   // two parameters - castText as string and languages as string[]
   @IsString()
   castText: string;
@@ -8,6 +8,17 @@ export class CreateGlotsphereDto {
   @IsArray()
   @IsString({ each: true })
   languages: string[];
+
+  @IsString()
+  fid: string;
+}
+
+export class CastByNeynarDto {
+  @IsString()
+  castText: string;
+
+  @IsString()
+  signerUuid: string;
 
   @IsString()
   fid: string;

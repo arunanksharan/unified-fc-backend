@@ -8,11 +8,12 @@ import { SupabaseService } from './supabase.service';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'translation',
-      // Additional configuration like Redis connection settings can go here
-    }),
-    // other imports
+    BullModule.registerQueue(
+      {
+        name: 'translation',
+      },
+      { name: 'casting' },
+    ),
   ],
   controllers: [GlotsphereController],
   providers: [
