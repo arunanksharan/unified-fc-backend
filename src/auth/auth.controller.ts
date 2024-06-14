@@ -6,19 +6,20 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupResponseDto, SignupRequestDto } from './dto/siwe.dto';
+import { SignupDevResponseDto, SignupDevRequestDto } from './dto/siwe.dto';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup/eth')
-  async signupWithEth(
-    @Body() body: SignupRequestDto,
-  ): Promise<SignupResponseDto> {
+  @Post('signup/developer/eth')
+  async signupDevWithEth(
+    @Body() body: SignupDevRequestDto,
+  ): Promise<SignupDevResponseDto> {
     try {
-      const userWithApiKey = await this.authService.handleSignupWithEth(body);
-      if (!userWithApiKey) {
+      const devWithApiKey =
+        await this.authService.handleSignupDeveloperWithEth(body);
+      if (!devWithApiKey) {
         throw new HttpException(
           'Failed to verify SIWE signature',
           HttpStatus.UNAUTHORIZED,
@@ -26,7 +27,7 @@ export class AuthController {
       }
       return {
         message: 'Signup successful',
-        ...userWithApiKey,
+        ...devWithApiKey,
       };
     } catch (error) {
       throw new HttpException(

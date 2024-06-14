@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class SignupRequestDto {
+export class SignupDevRequestDto {
   @IsString()
   message: string;
 
@@ -17,7 +17,7 @@ export class SignupRequestDto {
   ethAddress: string;
 }
 
-export class SignupResponseDto {
+export class SignupDevResponseDto {
   @IsString()
   message: string;
 

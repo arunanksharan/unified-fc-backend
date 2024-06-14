@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { SignupRequestDto } from './dto/siwe.dto';
-import { UsersService } from '@/users/users.service';
+import { SignupDevRequestDto } from './dto/siwe.dto';
+import { DeveloperService } from '@/developer/developer.service';
 import { ethers } from 'ethers';
+import { createHmac } from 'crypto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly developerService: DeveloperService) {}
 
-  async handleSignupWithEth(body: SignupRequestDto): Promise<any> {
+  async handleSignupDeveloperWithEth(body: SignupDevRequestDto): Promise<any> {
     try {
       console.log('validateSiwe', body);
       const { ethAddress, signature, nonce, domain } = body; // message is redundant
@@ -16,11 +17,11 @@ export class AuthService {
 
       const signerAddress = ethers.verifyMessage(messageToVerify, signature);
       if (signerAddress.toLowerCase() === ethAddress.toLowerCase()) {
-        const userWithApiKey = await this.usersService.createUser(
+        const developerWithApiKey = await this.developerService.createDeveloper(
           ethAddress,
           domain,
         );
-        return userWithApiKey;
+        return developerWithApiKey;
       }
 
       return null;
@@ -28,5 +29,52 @@ export class AuthService {
       console.error('Failed to verify SIWE signature:', error);
       return null;
     }
+  }
+
+  async validateApiKeyAndSignature(
+    apikey: string,
+    req: Request,
+  ): Promise<boolean> {
+    console.log('validateApiKey', apikey);
+    console.log('validateApiKey APIKEY', apikey);
+
+    const apiKeyDetails = await this.developerService.getApiKeyDetails(apikey);
+    console.log('validateApiKey apiKeyDetails', apiKeyDetails);
+
+    if (!apiKeyDetails) {
+      return false;
+    }
+
+    const apiSecret = apiKeyDetails.api_secret;
+
+    const signature = req.headers['x-signature'] as string;
+    if (!signature) {
+      throw new Error('Signature is required');
+    }
+
+    console.log('validateApiKey signature', signature);
+    const nonce = req.headers['x-nonce'] as string;
+    if (!nonce) {
+      throw new Error('Nonce is required');
+    }
+    console.log('validateApiKey nonce', nonce);
+
+    if (!this.verifySignature(apiSecret, { nonce: nonce }, signature)) {
+      throw new Error('Invalid API key or signature');
+    }
+
+    return true;
+  }
+  private verifySignature(
+    secret: string,
+    payload: any,
+    signature: string,
+  ): boolean {
+    console.log('verifySignature', secret, payload, signature);
+    const computedSignature = createHmac('sha256', secret)
+      .update(JSON.stringify(payload))
+      .digest('hex');
+    console.log('computedSignature', computedSignature);
+    return computedSignature === signature;
   }
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGlotsphereDto } from './dto/create-glotsphere.dto';
+import { CreateCastDto } from './dto/create-glotsphere.dto';
 import { UpdateGlotsphereDto } from './dto/update-glotsphere.dto';
 
 @Injectable()
 export class GlotsphereService {
-  create(createGlotsphereDto: CreateGlotsphereDto) {
+  create(createGlotsphereDto: CreateCastDto) {
     return 'This action adds a new glotsphere';
   }
 

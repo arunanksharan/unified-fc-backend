@@ -5,6 +5,7 @@ import { BullModule } from '@nestjs/bull';
 import { BullQueueService } from './bull-queue.service';
 import { TranslationService } from './translation.service';
 import { SupabaseService } from './supabase.service';
+import { NeynarService } from './neynar.service';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SupabaseService } from './supabase.service';
     SupabaseService,
     BullQueueService,
     TranslationService,
+    NeynarService,
   ],
 })
 export class GlotsphereModule {}

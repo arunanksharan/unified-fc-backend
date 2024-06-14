@@ -5,6 +5,7 @@ import { GlotsphereModule } from './glotsphere/glotsphere.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BullModule } from '@nestjs/bull';
+import { DeveloperModule } from './developer/developer.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BullModule } from '@nestjs/bull';
     GlotsphereModule,
     AuthModule,
     UsersModule,
+    DeveloperModule,
   ],
   controllers: [AppController],
   providers: [AppService],
