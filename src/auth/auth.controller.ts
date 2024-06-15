@@ -8,7 +8,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignupDevResponseDto, SignupDevRequestDto } from './dto/siwe.dto';
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

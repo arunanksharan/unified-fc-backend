@@ -5,6 +5,7 @@ import { UpdateGlotsphereDto } from './dto/update-glotsphere.dto';
 @Injectable()
 export class GlotsphereService {
   create(createGlotsphereDto: CreateCastDto) {
+    console.log('createGlotsphereDto', createGlotsphereDto);
     return 'This action adds a new glotsphere';
   }
 
@@ -17,6 +18,7 @@ export class GlotsphereService {
   }
 
   update(id: number, updateGlotsphereDto: UpdateGlotsphereDto) {
+    console.log('updateGlotsphereDto', updateGlotsphereDto);
     return `This action updates a #${id} glotsphere`;
   }
 

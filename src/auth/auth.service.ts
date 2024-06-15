@@ -49,25 +49,25 @@ export class AuthService {
 
     const signature = req.headers['x-signature'] as string;
     if (!signature) {
-      throw new Error('Signature is required');
+      return false;
     }
 
     console.log('validateApiKey signature', signature);
     const nonce = req.headers['x-nonce'] as string;
     if (!nonce) {
-      throw new Error('Nonce is required');
+      return false;
     }
     console.log('validateApiKey nonce', nonce);
 
     if (!this.verifySignature(apiSecret, { nonce: nonce }, signature)) {
-      throw new Error('Invalid API key or signature');
+      return false;
     }
 
     return true;
   }
   private verifySignature(
     secret: string,
-    payload: any,
+    payload: { nonce: string },
     signature: string,
   ): boolean {
     console.log('verifySignature', secret, payload, signature);
