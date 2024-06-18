@@ -1,84 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { UserWithApiKeyResponseDto } from '@/users/dto/user.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/lib/supabase/supabase.client';
-import * as bcrypt from 'bcryptjs';
+import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserResponseDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
-  async createUser(
-    ethereumAddress: string,
-    domain: string,
-  ): Promise<UserWithApiKeyResponseDto> {
+  async createUser({
+    fid,
+    name,
+    pfp,
+  }: CreateUserDto): Promise<CreateUserResponseDto> {
     try {
       // Todo: rename User to App
       // Case 1: Check if the user exists
-      const { data: user, error: userError } = await supabase
+      const { data: existingUser, error: existingUserError } = await supabase
         .from('users')
         .select('*')
-        .eq('ethereum_address', ethereumAddress)
+        .eq('fid', fid)
         .single();
 
-      console.log('line 21 user fetched', user);
+      console.log('line 21 user fetched', existingUser);
 
-      if (userError) {
-        throw new Error(`Failed to fetch user line 22: ${userError.message}`);
+      if (existingUserError) {
+        throw new Error(
+          `Failed to fetch user line 22: ${existingUserError.message}`,
+        );
       }
 
-      // Case 1A: If user exists, fetch & return its user details with API key
-      if (user) {
-        const { data: apiKeyData, error: apiKeyError } = await supabase
-          .from('api_keys')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
+      // Case 1: If user exists, take no action
+      // Case 2: If user doesn't exist, create a new user
+      if (existingUser?.length === 0) {
+        const { data: newUser, error: newUserError } = await supabase
+          .from('users')
+          .insert({ fid: fid, name: name, profile_pic: pfp })
+          .select();
 
-        if (apiKeyError) {
-          throw new Error(`Failed to fetch API key: ${apiKeyError.message}`);
-        }
+        console.log('line 53 new user', newUser);
+
+        if (newUserError)
+          throw new Error(`Failed to create user 52: ${newUserError.message}`);
+
         return {
-          id: user.id,
-          ethAddress: user.ethereum_address,
-          domain: user.domain,
-          apiKey: apiKeyData.api_key,
-          apiSecret: apiKeyData.api_secret,
+          id: newUser[0].id,
+          fid: newUser[0].fid,
+          name: newUser[0].name,
+          pfp: newUser[0].profile_pic,
         };
       }
-
-      // Case 2: If user doesn't exist, create a new user
-      const { data: newUser, error: newUserError } = await supabase
-        .from('users')
-        .insert({ ethereum_address: ethereumAddress, domain: domain })
-        .select();
-
-      console.log('line 53 new user', newUser);
-
-      if (newUserError)
-        throw new Error(`Failed to create user 52: ${newUserError.message}`);
-
-      // Case 2A: Create a new API key for the new user
-      const newApiKey = uuidv4().replace(/-/g, '');
-      const newApiSecret = await bcrypt.hash(uuidv4(), 10);
-      const { data: apiKeyData, error: apiKeyError } = await supabase
-        .from('api_keys')
-        .insert({
-          api_key: newApiKey,
-          user_id: newUser[0].id,
-          api_secret: newApiSecret,
-        })
-        .select();
-
-      console.log('line 70 new api key', apiKeyData);
-
-      if (apiKeyError)
-        throw new Error(`Failed to create API key: ${apiKeyError.message}`);
-
+      // Todo: Update name and profile pic if they have changed
       return {
-        id: newUser[0].id,
-        ethAddress: newUser[0].ethereum_address,
-        domain: newUser[0].domain,
-        apiKey: apiKeyData[0].api_key,
-        apiSecret: apiKeyData[0].api_secret,
+        id: existingUser[0].id,
+        fid: existingUser[0].fid,
+        name: existingUser[0].name,
+        pfp: existingUser[0].profile_pic,
       };
     } catch (error) {
       console.error('Failed to create new user:', error);
