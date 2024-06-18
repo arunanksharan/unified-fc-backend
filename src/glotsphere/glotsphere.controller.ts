@@ -6,13 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { GlotsphereService } from './glotsphere.service';
 import { CreateCastDto } from './dto/create-glotsphere.dto';
 import { UpdateGlotsphereDto } from './dto/update-glotsphere.dto';
 import { BullQueueService } from './bull-queue.service';
-import { APIKeyAuthGuard } from '@/auth/guard/apiKey-auth.guard';
+// import { APIKeyAuthGuard } from '@/auth/guard/apiKey-auth.guard';
 
 /**
  * @dev GlotsphereController is a class that defines the routes for the Glotsphere service
@@ -29,13 +29,13 @@ export class GlotsphereController {
     private readonly bullQueueService: BullQueueService,
   ) {}
 
-  @UseGuards(APIKeyAuthGuard)
+  // @UseGuards(APIKeyAuthGuard)
   @Get('test')
   async test() {
     return 'Testing Glotsphere Controller';
   }
 
-  @UseGuards(APIKeyAuthGuard)
+  // @UseGuards(APIKeyAuthGuard)
   @Post('create')
   async create(@Body() createCastDto: CreateCastDto) {
     /**

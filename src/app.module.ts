@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { BullModule } from '@nestjs/bull';
 import { DeveloperModule } from './developer/developer.module';
+import { ShowcastModule } from './showcast/showcast.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DeveloperModule } from './developer/developer.module';
     AuthModule,
     UsersModule,
     DeveloperModule,
+    ShowcastModule,
   ],
   controllers: [AppController],
   providers: [AppService],

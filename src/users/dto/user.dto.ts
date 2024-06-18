@@ -1,18 +1,15 @@
 import { IsString } from 'class-validator';
 
-export class UserWithApiKeyResponseDto {
+export class CreateUserResponseDto {
   @IsString()
   id: string;
 
   @IsString()
-  ethAddress: string;
+  fid: string;
 
   @IsString()
-  domain: string;
+  name?: string;
 
   @IsString()
-  apiKey: string;
-
-  @IsString()
-  apiSecret: string;
+  pfp?: string;
 }
