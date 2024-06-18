@@ -7,3 +7,12 @@
 
 I am fed up of deploying multiple Vercel apps and their timeouts.
 I need to run Kafka queues which require a backend server listening to the queue.
+
+## User Stories:
+
+### Glotsphere
+
+1. As a user, I can translate and post a cast in the languages specified.
+
+- Path - POST: glotsphere/create | body: {"castText": "", "languages": [""], "fid": "fid"} - CastCastDto
+-
