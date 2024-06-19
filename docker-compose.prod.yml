@@ -89,3 +89,5 @@ volumes:
   certs:
   vhostd:
   html:
+  logs:
+  tempfiles:
