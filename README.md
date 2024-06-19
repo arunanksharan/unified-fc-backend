@@ -16,3 +16,7 @@ I need to run Kafka queues which require a backend server listening to the queue
 
 - Path - POST: glotsphere/create | body: {"castText": "", "languages": [""], "fid": "fid"} - CastCastDto
 -
+
+## Nginx with Lets Encrypt Certbot:
+
+https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
