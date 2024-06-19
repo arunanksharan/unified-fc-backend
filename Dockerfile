@@ -36,7 +36,7 @@ COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modul
 
 COPY --chown=node:node . .
 
-RUN rm -rf node_modules package-lock.json && npm install
+# RUN rm -rf node_modules package-lock.json && npm install
 
 # Run the build command which creates the production bundle
 RUN npm run build
