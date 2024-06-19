@@ -73,6 +73,7 @@ services:
       - vhostd:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs
+      - acmesh:/etc/acme.sh
     depends_on:
       - nginx-proxy
 
@@ -85,7 +86,12 @@ volumes:
   redis:
     driver: local
   certs:
+    driver: local
   vhostd:
+    driver: local
   html:
+    driver: local
+  acmesh:
+    driver: local
   logs:
   tempfiles:
