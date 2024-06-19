@@ -3,6 +3,7 @@ import { SignupDevRequestDto } from './dto/siwe.dto';
 import { DeveloperService } from '@/developer/developer.service';
 import { ethers } from 'ethers';
 import { createHmac } from 'crypto';
+import { SIGNATURE_ALGORITHM } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -40,19 +41,17 @@ export class AuthService {
 
     const apiKeyDetails = await this.developerService.getApiKeyDetails(apikey);
     console.log('validateApiKey apiKeyDetails', apiKeyDetails);
-
     if (!apiKeyDetails) {
       return false;
     }
 
     const apiSecret = apiKeyDetails.api_secret;
-
     const signature = req.headers['x-signature'] as string;
     if (!signature) {
       return false;
     }
-
     console.log('validateApiKey signature', signature);
+
     const nonce = req.headers['x-nonce'] as string;
     if (!nonce) {
       return false;
@@ -65,13 +64,14 @@ export class AuthService {
 
     return true;
   }
+
   private verifySignature(
     secret: string,
     payload: { nonce: string },
     signature: string,
   ): boolean {
     console.log('verifySignature', secret, payload, signature);
-    const computedSignature = createHmac('sha256', secret)
+    const computedSignature = createHmac(SIGNATURE_ALGORITHM, secret)
       .update(JSON.stringify(payload))
       .digest('hex');
     console.log('computedSignature', computedSignature);

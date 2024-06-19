@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ShowcastService } from './showcast.service';
 import { CreateShowcastDto } from './dto/create-showcast.dto';
@@ -21,8 +22,16 @@ export class ShowcastController {
   ) {}
 
   @Post('queue')
-  queue(@Body() queueShowcastDto: QueueUserShowcastDto) {
-    return this.bullQueueService.addUserToQueueJob(queueShowcastDto);
+  async queue(@Body() queueShowcastDto: QueueUserShowcastDto) {
+    const job = await this.bullQueueService.addUserToQueueJob(queueShowcastDto);
+    return { message: 'Translation in progress', jobId: job.id };
+  }
+
+  @Get('getRoom')
+  async getRoom(@Query('fid') fid: string) {
+    console.log('fid in getRoom', fid);
+    const roomId = await this.showcastService.getAssignedRoom(fid);
+    return { roomId };
   }
 
   @Post()

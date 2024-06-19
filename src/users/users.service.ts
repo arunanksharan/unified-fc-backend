@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { supabase } from '@/lib/supabase/supabase.client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateUserResponseDto } from './dto/user.dto';
+import { SB_TABLE_USERS } from './constants/constants';
 
 @Injectable()
 export class UsersService {
@@ -11,14 +12,11 @@ export class UsersService {
     pfp,
   }: CreateUserDto): Promise<CreateUserResponseDto> {
     try {
-      // Todo: rename User to App
       // Case 1: Check if the user exists
       const { data: existingUser, error: existingUserError } = await supabase
-        .from('users')
+        .from(SB_TABLE_USERS)
         .select('*')
-        .eq('fid', fid)
-        .single();
-
+        .eq('fid', fid);
       console.log('line 21 user fetched', existingUser);
 
       if (existingUserError) {
@@ -31,7 +29,7 @@ export class UsersService {
       // Case 2: If user doesn't exist, create a new user
       if (existingUser?.length === 0) {
         const { data: newUser, error: newUserError } = await supabase
-          .from('users')
+          .from(SB_TABLE_USERS)
           .insert({ fid: fid, name: name, profile_pic: pfp })
           .select();
 

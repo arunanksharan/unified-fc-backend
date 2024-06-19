@@ -2,11 +2,28 @@
 
 import { supabase } from '@/lib/supabase/supabase.client';
 import { Injectable } from '@nestjs/common';
-import { SB_TABLE_ROOMS, SB_TABLE_ROOM_USER_MAPPING } from './types/types';
+import {
+  SB_TABLE_ROOMS,
+  SB_TABLE_ROOM_USER_MAPPING,
+} from './constants/constants';
 
 @Injectable()
 export class SupabaseService {
   private supabase = supabase;
+
+  async getCurrentlyAssignedUserRoom(fid: string) {
+    const { data, error } = await this.supabase
+      .from(SB_TABLE_ROOM_USER_MAPPING)
+      .select('*')
+      .eq('fid', fid);
+    console.log('existing room for user line 16', data);
+    if (error) throw new Error(error.message);
+    if (data.length == 0) return null;
+    // const roomId = await data[0].room_id;
+    // console.log('roomId line 20 supabase', roomId);
+
+    return data;
+  }
 
   async findHalfRooms(): Promise<any> {
     const { data, error } = await this.supabase
@@ -57,7 +74,7 @@ export class SupabaseService {
     return data;
   }
 
-  async assignRoomToUser(fid: string, roomId: string) {
+  async assignRoomToUser({ fid, roomId }: { fid: string; roomId: string }) {
     const { data, error } = await this.supabase
       .from(SB_TABLE_ROOM_USER_MAPPING)
       .select('*')
@@ -123,9 +140,16 @@ export class SupabaseService {
     if (error) throw new Error(error.message);
     return data;
   }
-  async removeAssignedRoomToUser(roomId: string, fid: string) {
+  async removeAssignedRoomToUser({
+    fid,
+    roomId,
+  }: {
+    fid: string;
+    roomId: string;
+  }) {
     // Find the room_user row using fid
     // set the room_id to null
+    console.log('roomId', roomId);
     const { data, error } = await this.supabase
       .from(SB_TABLE_ROOM_USER_MAPPING)
       .update({ room_id: null })

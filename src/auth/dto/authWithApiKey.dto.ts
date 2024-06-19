@@ -1,9 +1,13 @@
 import { IsString } from 'class-validator';
 
+// Redunadant since pulling this data from the request header
 export class AuthWithApiKeyRequestDto {
   @IsString()
-  apiKey: string;
+  'x-api-key': string;
 
   @IsString()
-  apiSecret: string;
+  'x-nonce': string;
+
+  @IsString()
+  'x-signature': string;
 }

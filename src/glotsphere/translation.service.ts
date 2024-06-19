@@ -35,12 +35,12 @@ export class TranslationService {
         response_format: { type: 'json_object' },
       });
       const result = completion.choices[0].message.content || '{}';
-      console.log('result:', result);
+      // console.log('result:', result);
 
       const jsonResponse = JSON.parse(result);
-      console.log('xxxxxxxx start jsonResponse parsed is');
-      console.log(jsonResponse);
-      console.log('xxxxxxxx end jsonResponse parsed is');
+      // console.log('xxxxxxxx start jsonResponse parsed is');
+      // console.log(jsonResponse);
+      // console.log('xxxxxxxx end jsonResponse parsed is');
       return jsonResponse;
     } catch (error) {
       console.error('Error fetching translations:', error);

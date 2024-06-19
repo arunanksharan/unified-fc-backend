@@ -4,7 +4,7 @@ import { UpdateDeveloperDto } from './dto/update-developer.dto';
 import { supabase } from '@/lib/supabase/supabase.client';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
-import { SB_TABLE_API_KEYS, SB_TABLE_DEVELOPERS } from './types/types';
+import { SB_TABLE_API_KEYS, SB_TABLE_DEVELOPERS } from './constants/constants';
 
 @Injectable()
 export class DeveloperService {
@@ -13,7 +13,6 @@ export class DeveloperService {
     domain: string,
   ): Promise<DeveloperWithApiKeyResponseDto> {
     try {
-      // Todo: rename User to App
       // Case 1: Check if the user exists
       const { data: user, error: userError } = await supabase
         .from(SB_TABLE_DEVELOPERS)

@@ -40,11 +40,11 @@ export class BullQueueService implements OnModuleInit {
         const { actionType, roomId, fid } = job.data;
 
         if (actionType == 'join') {
-          this.processRoomJoinJobs(fid);
+          await this.processRoomJoinJobs(fid);
         } else if (actionType == 'leave') {
-          this.processRoomLeaveJobs(roomId, fid);
+          await this.processRoomLeaveJobs({ fid, roomId });
         } else if (actionType == 'signout') {
-          this.processRoomSignoutJobs(roomId, fid);
+          await this.processRoomSignoutJobs({ fid, roomId });
         }
       } catch (error) {
         console.error('Room assignment failed', error);
@@ -52,6 +52,17 @@ export class BullQueueService implements OnModuleInit {
     });
   }
   private async processRoomJoinJobs(fid: string) {
+    // Before anything - Check if the user has a room assigned already - covers for cases such as page refresh
+
+    // Case 0: get user's existing room
+    const userRoom =
+      await this.supabaseService.getCurrentlyAssignedUserRoom(fid);
+    console.log('userRoom', userRoom);
+
+    if (userRoom.length > 0 && userRoom[0].room_id !== null) {
+      return userRoom[0].room_id;
+    }
+
     // Case 1: get half rooms if any
     const halfRooms = await this.supabaseService.findHalfRooms();
 
@@ -59,7 +70,7 @@ export class BullQueueService implements OnModuleInit {
       const room = await this.getRandomRoom(halfRooms);
       const roomId = await room.room_id;
       await this.supabaseService.updateHalfRoomToFull(roomId);
-      await this.supabaseService.assignRoomToUser(roomId, fid);
+      await this.supabaseService.assignRoomToUser({ fid, roomId });
       return roomId;
     }
 
@@ -71,7 +82,7 @@ export class BullQueueService implements OnModuleInit {
       const room = await this.getRandomRoom(vacantRooms);
       const roomId = await room.room_id;
       await this.supabaseService.updateVacantRoomToHalf(roomId);
-      await this.supabaseService.assignRoomToUser(roomId, fid);
+      await this.supabaseService.assignRoomToUser({ fid, roomId });
       return roomId;
     }
     // If code reaches here => vacantRooms.length == 0
@@ -80,10 +91,16 @@ export class BullQueueService implements OnModuleInit {
     // Insert to supabase tables
     const roomId = await this.createHuddleRoom();
     await this.supabaseService.insertNewRoomInSB(roomId);
-    await this.supabaseService.assignRoomToUser(roomId, fid);
+    await this.supabaseService.assignRoomToUser({ fid, roomId });
     return roomId;
   }
-  private async processRoomLeaveJobs(roomId: string, fid: string) {
+  private async processRoomLeaveJobs({
+    roomId,
+    fid,
+  }: {
+    roomId: string;
+    fid: string;
+  }) {
     console.log(roomId, fid);
 
     const room = await this.supabaseService.getRoomStatus(roomId);
@@ -93,11 +110,17 @@ export class BullQueueService implements OnModuleInit {
     } else if (roomStatus == 'half') {
       await this.supabaseService.updateHalfRoomToVacant(roomId);
     }
-    await this.supabaseService.removeAssignedRoomToUser(roomId, fid);
+    await this.supabaseService.removeAssignedRoomToUser({ fid, roomId });
     await this.addUserToQueueJob({ fid, actionType: 'join', roomId: '1' });
     return roomId;
   }
-  private async processRoomSignoutJobs(roomId: string, fid: string) {
+  private async processRoomSignoutJobs({
+    roomId,
+    fid,
+  }: {
+    roomId: string;
+    fid: string;
+  }) {
     console.log(roomId, fid);
 
     const room = await this.supabaseService.getRoomStatus(roomId);
@@ -107,7 +130,7 @@ export class BullQueueService implements OnModuleInit {
     } else if (roomStatus == 'half') {
       await this.supabaseService.updateHalfRoomToVacant(roomId);
     }
-    await this.supabaseService.removeAssignedRoomToUser(roomId, fid);
+    await this.supabaseService.removeAssignedRoomToUser({ fid, roomId });
     return roomId;
   }
 

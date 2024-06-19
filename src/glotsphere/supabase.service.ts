@@ -3,13 +3,15 @@
 import { supabase } from '@/lib/supabase/supabase.client';
 import { Injectable } from '@nestjs/common';
 import {
-  CreateTranslationRequestSupabaseType,
   SB_TABLE_TRANSLATED_TEXT,
   SB_TABLE_TRANSLATION_REQUEST,
   SB_TABLE_USER_SIGNERS,
+} from './constants/constants';
+
+import {
+  CreateTranslationRequestSupabaseType,
   TranslatedTextType,
 } from './types/types';
-// import { createClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseService {
