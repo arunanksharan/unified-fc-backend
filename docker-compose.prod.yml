@@ -17,7 +17,7 @@ services:
       - logs:/usr/src/app/logs
       - tempfiles:/usr/src/app/temp
     depends_on:
-      - nginx-proxy
+      - nginx
       - postgres
       - redis
 
