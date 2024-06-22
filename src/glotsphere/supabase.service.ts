@@ -1,6 +1,11 @@
 // src/glotsphere/supabase.service.ts
+import {
+  CreateSignerInDBDto,
+  UserSignerSBResponseDto,
+} from '@/glotsphere/dto/user-signer.dto';
 
 import { supabase } from '@/lib/supabase/supabase.client';
+import { PostgrestResponse } from '@supabase/supabase-js';
 import { Injectable } from '@nestjs/common';
 import {
   SB_TABLE_TRANSLATED_TEXT,
@@ -40,13 +45,43 @@ export class SupabaseService {
     console.log('Translated text saved:', data);
   }
 
-  async getSignerData(fid: string) {
+  async createSignerInDB(createSignerInDBDto: CreateSignerInDBDto) {
+    console.log('createSignerInDBDto', createSignerInDBDto);
+
+    console.log('saving in supabase user_signers....');
+    console.log(createSignerInDBDto);
     const { data, error } = await this.supabase
       .from(SB_TABLE_USER_SIGNERS)
-      .select('*')
-      .eq('fid', fid)
-      .single();
+      .insert(createSignerInDBDto)
+      .select();
+    console.log('data', data);
+    console.log('error', error);
+    return data;
+  }
+
+  async updateSignerInDB(signer_uuid: string) {
+    console.log('updateSignerInDBDto', signer_uuid);
+    const { data, error } = await this.supabase
+      .from(SB_TABLE_USER_SIGNERS)
+      .update({ status: 'approved' })
+      .eq('signer_uuid', signer_uuid)
+      .select();
+    console.log('data', data);
+    console.log('error', error);
+    return data;
+  }
+
+  async getSignerForFidFromDB(fid: string): Promise<UserSignerSBResponseDto[]> {
+    // Todo: Add developer_fid filter to separate signers by app as well
+    const { data, error }: PostgrestResponse<UserSignerSBResponseDto> =
+      await this.supabase
+        .from(SB_TABLE_USER_SIGNERS)
+        .select('*')
+        .eq('user_fid', fid);
     if (error) throw new Error(error.message);
+
+    console.log('Inside SB service getSignerForFidFromDB:', data);
+
     return data;
   }
 }

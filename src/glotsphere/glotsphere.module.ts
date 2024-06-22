@@ -4,8 +4,8 @@ import { GlotsphereController } from './glotsphere.controller';
 import { BullModule } from '@nestjs/bull';
 import { BullQueueService } from './bull-queue.service';
 import { TranslationService } from './translation.service';
-import { SupabaseService } from './supabase.service';
 import { NeynarService } from './neynar.service';
+import { SupabaseService } from './supabase.service';
 
 @Module({
   imports: [
@@ -19,10 +19,10 @@ import { NeynarService } from './neynar.service';
   controllers: [GlotsphereController],
   providers: [
     GlotsphereService,
-    SupabaseService,
     BullQueueService,
     TranslationService,
     NeynarService,
+    SupabaseService,
   ],
 })
 export class GlotsphereModule {}

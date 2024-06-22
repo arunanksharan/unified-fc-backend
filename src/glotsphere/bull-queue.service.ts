@@ -4,7 +4,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { CreateCastDto, CastByNeynarDto } from './dto/create-glotsphere.dto';
-import { SupabaseService } from './supabase.service'; // Assume this service handles Supabase interactions
+import { SupabaseService } from './supabase.service';
 import { TranslationService } from './translation.service';
 import { GPTTranslatedTextType, TranslatedTextType } from './types/types';
 import { NeynarService } from './neynar.service';
@@ -80,15 +80,14 @@ export class BullQueueService implements OnModuleInit {
 
         // Add to casting queue
         // fetch signer_uuid for fid
-        const { data: signerData, error } =
-          await this.supabaseService.getSignerData(fid);
+        const signer = await this.supabaseService.getSignerForFidFromDB(fid);
         // need tranlsated text, fid, signer_uuid
-        if (error) throw new Error(error.message);
+        // if (error) throw new Error(error.message);
 
         for (const entry of entries) {
           await this.addCastingJob({
             fid: fid,
-            signerUuid: signerData.signer_uuid,
+            signerUuid: signer[0].signer_uuid,
             castText: entry.cast_text,
           });
         }

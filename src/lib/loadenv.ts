@@ -17,6 +17,6 @@ export const REDIS_HOST = process.env.REDIS_HOST || 'redis';
 export const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379');
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 
-export const NESTJS_PORT = process.env.NESTJS_PORT || '5000';
+export const NESTJS_PORT = process.env.NESTJS_PORT || '5001';
 export const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret';
 export const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME || '1d';

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@farcaster/auth-client": "^0.1.1",
+    "@farcaster/hub-nodejs": "^0.11.17",
     "@nestjs/bull": "^10.1.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
